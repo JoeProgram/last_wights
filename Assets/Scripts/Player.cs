@@ -11,6 +11,8 @@ public class Player : MonoBehaviour {
     float speed = 2f;
     bool facingRight = true;
 
+	public bool isAlive = true;
+
 	//running variables
 	public SpriteRenderer runBarHolder;
 	public SpriteRenderer runBar;
@@ -29,6 +31,22 @@ public class Player : MonoBehaviour {
 	Color runBarYellow = new Color(0.89453125f, 0.82421875f, 0.203125f);
 	Color runBarGreen = new Color(0, 0.5546875f, 0.0625f);
 
+	// candle variables
+	bool hasCandle = false;
+	bool usedCandle = false;
+	public SpriteRenderer candle;
+	public float useCandleTime = 0.5f;
+	public float useCandle;
+
+	//zoom in for candle action
+	public float normalCameraSize = 3.2f;
+	public Vector3 normalCameraPosition = new Vector3(0,3,-10);
+	public float candleCameraSize = 2;
+	public Vector3 candleCameraPosition = new Vector3(0,1,-10);
+
+	//room variables
+	public Room activeRoom;
+
 	void Start () {
 	
 		stamina = maxStamina;
@@ -40,6 +58,17 @@ public class Player : MonoBehaviour {
 
 	void FixedUpdate () {
 
+		// you have to be alive to do things
+		if( !isAlive ) return;
+
+		// if you used the candle, you're done controlling the character
+		if(usedCandle) return;
+
+		/*********************************
+		 * 
+		 *  MOVEMENT
+		 * 
+		 ******************************/
 
 		// only turn on run if certain conditions are met
 		if(!isRunning && Input.GetAxis("Run") > 0 && stamina >= minStaminaRequired) {
@@ -77,7 +106,6 @@ public class Player : MonoBehaviour {
 				if( stamina == maxStamina ) HideRunBar();
 			}
 
-
 		}
 
 		// if we're running and moving, depelete stamina
@@ -89,6 +117,30 @@ public class Player : MonoBehaviour {
 			// see if running has run out.
 			if(isRunning && stamina == 0) {
 				isRunning = false;
+			}
+		}
+
+		/*********************************
+		 * 
+		 * USE CANDLE
+		 * 
+		 * *******************************/
+
+		if(hasCandle) {
+			if(Input.GetAxis("UseCandle") > 0) {
+				useCandle += Time.fixedDeltaTime;
+
+				if(useCandle >= useCandleTime)
+					Game.instance.ActivateCandle( activeRoom );
+
+				Camera.main.transform.localPosition = Vector3.Lerp(normalCameraPosition, candleCameraPosition, useCandle / useCandleTime);
+				Camera.main.orthographicSize = Mathf.Lerp(normalCameraSize, candleCameraSize, useCandle / useCandleTime);
+
+			} else if(useCandle > 0) {
+				useCandle = Mathf.Clamp(useCandle - Time.fixedDeltaTime, 0, useCandleTime);
+
+				Camera.main.transform.localPosition = Vector3.Lerp(normalCameraPosition, candleCameraPosition, useCandle / useCandleTime);
+				Camera.main.orthographicSize = Mathf.Lerp(normalCameraSize, candleCameraSize, useCandle / useCandleTime);
 			}
 		}
 
@@ -142,7 +194,22 @@ public class Player : MonoBehaviour {
 		runBarHolder.color = Color.white;
 	}
 
-	
+
+	void OnTriggerStay2D( Collider2D other ){
+
+		// keep track of the current room you're in
+		// the one that counts is the one that your point position
+		if(other.gameObject.CompareTag("room")) {
+			if( other.gameObject.GetComponent<BoxCollider2D>().OverlapPoint((Vector2)transform.position + Vector2.up )){
+				activeRoom = other.gameObject.GetComponent<Room>();
+			}
+		}
+	}
+
+	public Room GetActiveRoom(){
+		return activeRoom;
+	}
+
 	void OnCollisionEnter2D( Collision2D collision ){
 
 		
@@ -153,8 +220,45 @@ public class Player : MonoBehaviour {
 			if(ghost != null) {
 				if(ghost.isDangerous) {
 					Game.instance.LoseGame();
+					isAlive = false;
 				}
 			}
+		}
+	}
+
+	// the player has picked up the candle
+	public void GetCandle(){
+
+		hasCandle = true;
+		candle.gameObject.SetActive(true);
+		Game.instance.TurnOnCandlePrompt();
+	}
+
+	public void UsedCandle(){
+		hasCandle = false;
+		usedCandle = true;
+	}
+
+	// the player has used up the candle
+	public void UsedUpCandle(){
+
+		candle.gameObject.SetActive(false);
+
+	}
+		
+	public Vector3 GetCandlePosition(){
+		return candle.transform.position;
+	}
+
+
+	// singleton
+	private static Player _instance;
+	public static Player instance{
+		get{
+			if(_instance == null) {
+				_instance = FindObjectOfType<Player>();
+			}
+			return _instance;
 		}
 	}
 

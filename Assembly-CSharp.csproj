@@ -48,10 +48,13 @@
   <ItemGroup>
      <Compile Include="Assets\Demigiant\DOTween\Examples\Basics.cs" />
      <Compile Include="Assets\Demigiant\DOTween\Examples\Sequences.cs" />
+     <Compile Include="Assets\Scripts\ActionTrigger.cs" />
+     <Compile Include="Assets\Scripts\CandlePickupTrigger.cs" />
      <Compile Include="Assets\Scripts\Game.cs" />
      <Compile Include="Assets\Scripts\Ghost.cs" />
      <Compile Include="Assets\Scripts\HugGhost.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\Room.cs" />
      <None Include="Assets\Demigiant\DOTween\readme.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

@@ -9,9 +9,13 @@ using DG.Tweening;
 public class Game : MonoBehaviour {
 
 	public CanvasGroup lostMessage;
+	public CanvasGroup winMessage;
+	public Image candleActionPrompt;
+
+	public List<Ghost> ghosts;
 
 	public void Start(){
-		lostMessage = GameObject.Find("message_banner").GetComponent<CanvasGroup>();
+		ghosts = new List<Ghost>( GameObject.FindObjectsOfType<Ghost>());
 	}
 
 	public void LoseGame(){
@@ -35,9 +39,84 @@ public class Game : MonoBehaviour {
 
 	}
 
+	public void TurnOnCandlePrompt(){
+
+		candleActionPrompt.gameObject.SetActive(true);
+
+	}
+
+	public void ActivateCandle(Room room)
+	{
+		Player.instance.UsedCandle();
+		candleActionPrompt.gameObject.SetActive(false);
+		StartCoroutine(ActivateCandleHelper(room));
+	}
+
+	protected IEnumerator ActivateCandleHelper(Room room){
+
+		List<Ghost> allGhosts = new List<Ghost>(ghosts);
+
+		// time to see if you've won or not.
+		// first - we don't want players or the ghosts moving - they should stay still
+		foreach( Ghost ghost in allGhosts) {
+			ghost.SwitchToEnding();
+			//Player.instance.GetComponent<Rigidbody2D>() = true;
+		}
+			
+
+		// next, all ghosts in this room (even just touching it a little ) get sucked into the candle
+		foreach(Ghost deadGhost in Player.instance.activeRoom.GetGhosts()) {
+			allGhosts.Remove(deadGhost);
+			deadGhost.transform.DOMove(Player.instance.GetCandlePosition(), 0.5f).OnComplete( () => Destroy( deadGhost.gameObject ));
+			deadGhost.transform.DOScale(Vector3.one * 0.1f, 0.5f);
+			yield return new WaitForSeconds(0.2f);
+		}
+
+		yield return new WaitForSeconds(0.5f);
+		Player.instance.UsedUpCandle();
+
+		yield return new WaitForSeconds(0.5f);
+
+		Debug.Log("all ghosts length " + allGhosts.Count);
+
+		// if that's all the ghosts there are, you won!
+		if(allGhosts.Count == 0) {
+			WinGame();
+
+		// if there are any more ghosts, the first one comes and attacks you
+		} else {
+
+			yield return new WaitForSeconds(0.25f);
+			allGhosts[0].transform.DOMove(Player.instance.transform.position,0.5f);
+			yield return new WaitForSeconds(0.5f);
+			LoseGame();
+
+		}
 
 
 
+	}
+
+	public void WinGame(){
+		StartCoroutine(WinGameHelper());
+	}
+
+	protected IEnumerator WinGameHelper(){
+
+		// reveal the lost message
+		DOTween.To(
+			() => winMessage.alpha,
+			x => winMessage.alpha = x,
+			1,
+			0.5f
+		);
+		yield return new WaitForSeconds(0.5f);
+
+		yield return new WaitForSeconds(2f);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+
+	}
 
 
 

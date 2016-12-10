@@ -9,7 +9,7 @@ public enum GhostState
     WAITING,
     FOLLOWING,
     ATTACKING,
-
+	ENDING,
 }
 
 public class Ghost : MonoBehaviour {
@@ -166,6 +166,12 @@ public class Ghost : MonoBehaviour {
 		if( Vector2.Distance(player.transform.position, transform.position) <= followRange ) SwitchToFollowing();
 		else SwitchToWaiting(); 
 
+	}
+
+	public void SwitchToEnding(){
+		state = GhostState.ENDING;
+		sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, 1);
+		sprite.GetComponent<BoxCollider2D>().enabled = false;
 	}
 		
 
