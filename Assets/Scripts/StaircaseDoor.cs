@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StaircaseDoor : ActionTrigger {
 
+	public static StaircaseDoor LastUsedDoor; // globally keeps track of the last staircase door used
+
 	public StaircaseDoor connectedDoor; // where this lets out
 
 	public List<Room> rooms; // rooms (probably 1) this is associated with
@@ -31,6 +33,8 @@ public class StaircaseDoor : ActionTrigger {
 		foreach(Room room in connectedDoor.rooms) {
 			room.OpenRoom();
 		}
+
+		StaircaseDoor.LastUsedDoor = this;
 
 		yield return null;
 	}

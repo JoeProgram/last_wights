@@ -8,6 +8,7 @@ public enum GhostState
     HIDDEN,
     WAITING,
     FOLLOWING,
+	GOING_TO_DOOR,
     ATTACKING,
 	ENDING,
 }
@@ -17,6 +18,7 @@ public class Ghost : MonoBehaviour {
 
 	public GhostState state;
     public SpriteRenderer sprite;
+	public StaircaseDoor staircaseDoor;
 
 
 	// whether this is thinking about the player
@@ -57,7 +59,6 @@ public class Ghost : MonoBehaviour {
 
 		// hide the ghost
 		sprite.color = new Color( sprite.color.r, sprite.color.g, sprite.color.b, 0);
-		sprite.GetComponent<Collider2D>().enabled = false;
 		
 	}
 	
@@ -79,6 +80,9 @@ public class Ghost : MonoBehaviour {
 			break;
 		case GhostState.FOLLOWING:
 			UpdateFollowing();
+			break;
+		case GhostState.GOING_TO_DOOR:
+			UpdateGoingToDoor();
 			break;
 		}
 
@@ -122,8 +126,16 @@ public class Ghost : MonoBehaviour {
 		float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
 		transform.position += new Vector3(speed * Time.deltaTime * Mathf.Sign(player.transform.position.x - transform.position.x), 0, 0);
 
+
+
 		// see if we should switch to a new behavior
 		if(!isAwareOfPlayer) {
+
+			if(IsAwareOfLastUsedStaircaseDoor()) {
+				SwitchToGoingToDoor(StaircaseDoor.LastUsedDoor);
+				return;
+			}
+
 			SwitchToWaiting();  // if the player is too far away, stop following
 			return;
 		}
@@ -133,6 +145,38 @@ public class Ghost : MonoBehaviour {
 			return;
 		}
 
+	}
+
+	protected bool IsAwareOfLastUsedStaircaseDoor(){
+
+		Debug.Log(1);
+		if(StaircaseDoor.LastUsedDoor != null) {
+			Debug.Log(2);
+			return StaircaseDoor.LastUsedDoor.GetComponent<BoxCollider2D>().bounds.Intersects( GetComponent<BoxCollider2D>().bounds );
+		}
+
+		return false;
+
+	}
+
+	protected virtual void SwitchToGoingToDoor(StaircaseDoor sd){
+
+		Debug.Log(4);
+		staircaseDoor = sd;
+		state = GhostState.GOING_TO_DOOR;
+	}
+
+	protected virtual void UpdateGoingToDoor(){
+
+		Debug.Log(5);
+		// move the ghost towards the door
+		transform.position += new Vector3(speed * Time.deltaTime * Mathf.Sign(staircaseDoor.transform.position.x - transform.position.x), 0, 0);
+
+		// move into the door
+		if(sprite.bounds.Intersects(staircaseDoor.GetComponent<BoxCollider2D>().bounds)) {
+			transform.position = staircaseDoor.connectedDoor.transform.position;
+			SwitchToWaiting();
+		}
 	}
 
 	protected virtual void SwitchToAttacking(){
@@ -152,14 +196,14 @@ public class Ghost : MonoBehaviour {
 
 		// perform the attack
 		isDangerous = true;
-		sprite.GetComponent<Collider2D>().enabled = true;
+		sprite.gameObject.layer = LayerMask.NameToLayer("ghost");
 		sprite.color = new Color(1, 0, 0);
 		transform.DOJump(attackPosition, -0.25f, 1, attackAnimationTime);
 		yield return new WaitForSeconds(attackTime);
 
 		// the attack ends a little earlier than the animation
 		isDangerous = false;
-		sprite.GetComponent<Collider2D>().enabled = false;
+		sprite.gameObject.layer = LayerMask.NameToLayer("intangible");
 		sprite.color = new Color(1, 1, 1);
 		yield return new WaitForSeconds(attackAnimationTime - attackTime);
 
@@ -168,6 +212,7 @@ public class Ghost : MonoBehaviour {
 
 		//if player is close enough, switch to new behavior
 		if( Vector2.Distance(player.transform.position, transform.position) <= followRange ) SwitchToFollowing();
+		else if( IsAwareOfLastUsedStaircaseDoor()) SwitchToGoingToDoor( StaircaseDoor.LastUsedDoor );
 		else SwitchToWaiting(); 
 
 	}

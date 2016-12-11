@@ -5,7 +5,7 @@ using UnityEngine;
 // rooms help keep track of where objects are.
 public class Room : MonoBehaviour {
 
-	List<Ghost> ghosts;
+	public List<Ghost> ghosts;
 	bool isOpen = false;
 
 	public GameObject roomShadowPrefab;
@@ -13,6 +13,11 @@ public class Room : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		StartCoroutine(LateStart());
+	}
+
+	protected IEnumerator LateStart(){
+		yield return null;  // bleh - too many conflicts of things not getting setup properly because room turns them off.  
 
 		ghosts = new List<Ghost>();
 
@@ -31,9 +36,9 @@ public class Room : MonoBehaviour {
 			foreach(Transform t in transform) {
 				t.gameObject.SetActive(false);
 
-				if(t.gameObject.GetComponent<Ghost>() != null) {
-					ghosts.Add(t.gameObject.GetComponent<Ghost>());
-				}
+				//if(t.gameObject.GetComponent<Ghost>() != null) {
+				//	ghosts.Add(t.gameObject.GetComponent<Ghost>());
+				//}
 			}
 
 		}
