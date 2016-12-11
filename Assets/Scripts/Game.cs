@@ -8,10 +8,6 @@ using DG.Tweening;
 // keeps track of state of level
 public class Game : MonoBehaviour {
 
-	public CanvasGroup lostMessage;
-	public CanvasGroup winMessage;
-	public Image candleActionPrompt;
-
 	public List<Ghost> ghosts;
 
 	//sounds
@@ -33,8 +29,8 @@ public class Game : MonoBehaviour {
 
 		// reveal the lost message
 		DOTween.To(
-			() => lostMessage.alpha,
-			x => lostMessage.alpha = x,
+			() => UI.instance.lostMessage.alpha,
+			x => UI.instance.lostMessage.alpha = x,
 			1,
 			0.5f
 		);
@@ -50,14 +46,14 @@ public class Game : MonoBehaviour {
 
 	public void TurnOnCandlePrompt(){
 
-		candleActionPrompt.gameObject.SetActive(true);
+		UI.instance.candleActionPrompt.gameObject.SetActive(true);
 
 	}
 
 	public void ActivateCandle(Room room)
 	{
 		Player.instance.UsedCandle();
-		candleActionPrompt.gameObject.SetActive(false);
+		UI.instance.candleActionPrompt.gameObject.SetActive(false);
 		StartCoroutine(ActivateCandleHelper(room));
 	}
 
@@ -126,16 +122,19 @@ public class Game : MonoBehaviour {
 
 		// reveal the lost message
 		DOTween.To(
-			() => winMessage.alpha,
-			x => winMessage.alpha = x,
+			() => UI.instance.winMessage.alpha,
+			x => UI.instance.winMessage.alpha = x,
 			1,
 			0.5f
 		);
 		yield return new WaitForSeconds(0.5f);
 
 		yield return new WaitForSeconds(2f);
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
+		Debug.Log("build index is " + SceneManager.GetActiveScene().buildIndex);
+
+		Debug.Log("scene count is " + SceneManager.sceneCountInBuildSettings); 
+		SceneManager.LoadScene(  (SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings);
 
 	}
 

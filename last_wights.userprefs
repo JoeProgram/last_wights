@@ -1,8 +1,18 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GhostHug.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game.cs">
     <Files>
-      <File FileName="Assets\Scripts\GhostHug.cs" Line="10" Column="1" />
+      <File FileName="Assets\Scripts\Ghost.cs" Line="110" Column="73" />
+      <File FileName="Assets\Scripts\HugGhost.cs" Line="6" Column="2" />
+      <File FileName="Assets\Scripts\Player.cs" Line="49" Column="2" />
+      <File FileName="Assets\Scripts\Game.cs" Line="135" Column="74" />
+      <File FileName="Assets\Scripts\ActionTrigger.cs" Line="13" Column="29" />
+      <File FileName="Assets\Scripts\CandlePickupTrigger.cs" Line="7" Column="37" />
+      <File FileName="Assets\Scripts\Room.cs" Line="16" Column="30" />
+      <File FileName="Assets\Scripts\DoorTrigger.cs" Line="14" Column="98" />
+      <File FileName="Assets\Scripts\Door.cs" Line="8" Column="26" />
+      <File FileName="Assets\Scripts\StaircaseDoor.cs" Line="32" Column="98" />
+      <File FileName="Assets\Scripts\UI.cs" Line="10" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

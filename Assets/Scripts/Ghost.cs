@@ -156,9 +156,7 @@ public class Ghost : MonoBehaviour {
 
 	protected bool IsAwareOfLastUsedStaircaseDoor(){
 
-		Debug.Log(1);
 		if(StaircaseDoor.LastUsedDoor != null) {
-			Debug.Log(2);
 			return StaircaseDoor.LastUsedDoor.GetComponent<BoxCollider2D>().bounds.Intersects( GetComponent<BoxCollider2D>().bounds );
 		}
 
@@ -168,14 +166,12 @@ public class Ghost : MonoBehaviour {
 
 	protected virtual void SwitchToGoingToDoor(StaircaseDoor sd){
 
-		Debug.Log(4);
 		staircaseDoor = sd;
 		state = GhostState.GOING_TO_DOOR;
 	}
 
 	protected virtual void UpdateGoingToDoor(){
 
-		Debug.Log(5);
 		// move the ghost towards the door
 		transform.position += new Vector3(speed * Time.deltaTime * Mathf.Sign(staircaseDoor.transform.position.x - transform.position.x), 0, 0);
 
