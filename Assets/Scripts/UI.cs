@@ -7,7 +7,7 @@ public class UI : MonoBehaviour {
 
 	public CanvasGroup winMessage;
 	public CanvasGroup lostMessage;
-	public Image candleActionPrompt;
+	public CanvasGroup candleActionPrompt;
 
 	public Text tutorialText1;
 	public Text tutorialText2;

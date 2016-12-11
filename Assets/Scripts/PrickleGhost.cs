@@ -28,7 +28,7 @@ public class PrickleGhost : Ghost {
 		sprite.gameObject.layer = LayerMask.NameToLayer("ghost");
 		sprite.color = attackColor;
 		AudioSource.PlayClipAtPoint(sfxAttack, Camera.main.transform.position);
-		sprite.transform.DOShakePosition(attackPrepTime, new Vector3(0.2f,0,0),20,45,false,false);
+		//sprite.transform.DOShakePosition(attackPrepTime, new Vector3(0.2f,0,0),20,45,false,false);
 		yield return new WaitForSeconds(attackTime);
 
 		// the attack ends a little earlier than the animation

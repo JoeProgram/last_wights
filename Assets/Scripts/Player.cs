@@ -36,6 +36,7 @@ public class Player : MonoBehaviour {
 	// candle variables
 	bool hasCandle = false;
 	bool usedCandle = false;
+	bool usedCandleKeyDown = false;
 	public SpriteRenderer candle;
 	public bool canUseCandle = false;
 	public float useCandleTime = 0.5f;
@@ -52,6 +53,9 @@ public class Player : MonoBehaviour {
 	//room variables
 	public Room activeRoom;
 
+	//sounds
+	public AudioSource audioCannotUseCandle;
+	public AudioClip sfxTired;
 
 	void Start () {
 	
@@ -123,6 +127,7 @@ public class Player : MonoBehaviour {
 			// see if running has run out.
 			if(isRunning && stamina == 0) {
 				isRunning = false;
+				AudioSource.PlayClipAtPoint(sfxTired, Camera.main.transform.position);
 			}
 		}
 
@@ -136,16 +141,23 @@ public class Player : MonoBehaviour {
 
 			// see whether all the ghosts are in the same room
 			canUseCandle = GetActiveRoom().HasAllGhosts();
-			if( canUseCandle ) {
+			if(canUseCandle) {
 				redFlame.gameObject.SetActive(false);
 				blueFlame.gameObject.SetActive(true);
+				UI.instance.candleActionPrompt.alpha = 1;
 			} else {
 				redFlame.gameObject.SetActive(true);
 				blueFlame.gameObject.SetActive(false);
+				UI.instance.candleActionPrompt.alpha = 0.5f;
 			}
 
+			// the player is trying to use the candle, but they cannot yet
+			if( !canUseCandle && Input.GetAxis("UseCandle") > 0 && !usedCandleKeyDown ){
+				if(!audioCannotUseCandle.isPlaying ) {
+					audioCannotUseCandle.Play();
+				}
 
-			if(canUseCandle && Input.GetAxis("UseCandle") > 0) {
+			} else if(canUseCandle && Input.GetAxis("UseCandle") > 0) {
 
 				if(!GetComponent<AudioSource>().isPlaying) {
 					GetComponent<AudioSource>().Play();
@@ -171,6 +183,9 @@ public class Player : MonoBehaviour {
 				Camera.main.orthographicSize = Mathf.Lerp(normalCameraSize, candleCameraSize, useCandle / useCandleTime);
 			}
 		}
+
+		// simulate key press down
+		usedCandleKeyDown = Input.GetAxis("UseCandle") > 0;
 
 
 
@@ -256,6 +271,7 @@ public class Player : MonoBehaviour {
 					Game.instance.LoseGame();
 					isAlive = false;
 					GetComponent<Rigidbody2D>().isKinematic = true;
+					GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
 					Analytics.CustomEvent("level_lost", new Dictionary<string, object> {
 						{ "number", SceneManager.GetActiveScene().buildIndex },
@@ -275,7 +291,11 @@ public class Player : MonoBehaviour {
 
 		hasCandle = true;
 		candle.gameObject.SetActive(true);
-		Game.instance.TurnOnCandlePrompt();
+
+	}
+
+	public bool HasCandle(){
+		return hasCandle;
 	}
 
 	public void UsedCandle(){

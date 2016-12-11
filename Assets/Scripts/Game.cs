@@ -52,16 +52,9 @@ public class Game : MonoBehaviour {
 
 	}
 
-	public void TurnOnCandlePrompt(){
-
-		UI.instance.candleActionPrompt.gameObject.SetActive(true);
-
-	}
-
 	public void ActivateCandle(Room room)
 	{
 		Player.instance.UsedCandle();
-		UI.instance.candleActionPrompt.gameObject.SetActive(false);
 		StartCoroutine(ActivateCandleHelper(room));
 	}
 
