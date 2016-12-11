@@ -29,6 +29,8 @@ public class StaircaseDoor : ActionTrigger {
 		connectedDoor.inputProcessed = true; //kludge - we need the other door to already have counted the keypress as processed, though it may not be active yet
 		Player.instance.transform.position = connectedDoor.transform.position;
 
+		if( sfxAction != null ) AudioSource.PlayClipAtPoint(sfxAction, Camera.main.transform.position);
+
 
 		foreach(Room room in connectedDoor.rooms) {
 			room.OpenRoom();

@@ -47,6 +47,7 @@ public class Player : MonoBehaviour {
 	//room variables
 	public Room activeRoom;
 
+
 	void Start () {
 	
 		stamina = maxStamina;
@@ -128,6 +129,11 @@ public class Player : MonoBehaviour {
 
 		if(hasCandle) {
 			if(Input.GetAxis("UseCandle") > 0) {
+
+				if(!GetComponent<AudioSource>().isPlaying) {
+					GetComponent<AudioSource>().Play();
+				}
+
 				useCandle += Time.fixedDeltaTime;
 
 				if(useCandle >= useCandleTime)
@@ -137,6 +143,11 @@ public class Player : MonoBehaviour {
 				Camera.main.orthographicSize = Mathf.Lerp(normalCameraSize, candleCameraSize, useCandle / useCandleTime);
 
 			} else if(useCandle > 0) {
+
+				if(GetComponent<AudioSource>().isPlaying) {
+					GetComponent<AudioSource>().Stop();
+				}
+
 				useCandle = Mathf.Clamp(useCandle - Time.fixedDeltaTime, 0, useCandleTime);
 
 				Camera.main.transform.localPosition = Vector3.Lerp(normalCameraPosition, candleCameraPosition, useCandle / useCandleTime);

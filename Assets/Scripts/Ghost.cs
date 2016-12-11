@@ -44,6 +44,10 @@ public class Ghost : MonoBehaviour {
 	public float attackAnimationTime; // we animate a little longer than the actual attack
 	public float attackCoolDownTime; // how long it takes the ghost between attacks
 
+	// sounds
+	public AudioClip sfxReveal;
+	public AudioClip sfxPrepareAttack;
+	public AudioClip sfxAttack;
 
 	public virtual void Awake(){
 		Game.instance.AddGhost(this);
@@ -101,6 +105,9 @@ public class Ghost : MonoBehaviour {
 		//if player is close enough, switch to new behavior
 		if( distanceToPlayer <= attackRange ) SwitchToAttacking();
 		else if(distanceToPlayer <= revealRange ) SwitchToFollowing(); 
+
+		// if we switched, play a sound
+		if( state != GhostState.HIDDEN ) AudioSource.PlayClipAtPoint(sfxReveal, Camera.main.transform.position);
 
 	}
 
@@ -192,12 +199,14 @@ public class Ghost : MonoBehaviour {
 
 		// cue the attack
 		sprite.transform.DOShakePosition(attackPrepTime, new Vector3(0.1f,0,0),20,45,false,false);
+		AudioSource.PlayClipAtPoint(sfxPrepareAttack, Camera.main.transform.position);
 		yield return new WaitForSeconds(attackPrepTime);
 
 		// perform the attack
 		isDangerous = true;
 		sprite.gameObject.layer = LayerMask.NameToLayer("ghost");
 		sprite.color = new Color(1, 0, 0);
+		AudioSource.PlayClipAtPoint(sfxAttack, Camera.main.transform.position);
 		transform.DOJump(attackPosition, -0.25f, 1, attackAnimationTime);
 		yield return new WaitForSeconds(attackTime);
 

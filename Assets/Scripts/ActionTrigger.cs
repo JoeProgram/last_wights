@@ -10,6 +10,8 @@ public class ActionTrigger : MonoBehaviour {
 	public SpriteRenderer prompt;
 	public bool inputProcessed; //there's no GetAxisDown, so we have to do a little more work
 
+	public AudioClip sfxAction;
+
 	void Start(){
 		
 	}

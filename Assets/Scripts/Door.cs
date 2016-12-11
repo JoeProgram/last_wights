@@ -25,6 +25,7 @@ public class Door : MonoBehaviour {
 
 		// reveal everything in connected rooms
 		foreach( Room room in rooms) room.OpenRoom(); 
+
 	}
 	
 

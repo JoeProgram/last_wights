@@ -11,6 +11,7 @@ public class DoorTrigger : ActionTrigger {
 	protected override void DoAction(){
 
 		door.OpenDoor();
+		if( sfxAction != null ) AudioSource.PlayClipAtPoint(sfxAction, Camera.main.transform.position);
 		Destroy(gameObject);
 	}
 }
