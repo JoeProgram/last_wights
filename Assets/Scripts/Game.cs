@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
+using UnityEngine.Analytics;
 
 // keeps track of state of level
 public class Game : MonoBehaviour {
@@ -14,6 +15,13 @@ public class Game : MonoBehaviour {
 	public AudioClip sfxLose;
 	public AudioClip sfxWin;
 	public AudioClip sfxGhostSuckedIn;
+
+	public void Start(){
+		Analytics.CustomEvent("level_started", new Dictionary<string, object> {
+			{ "number", SceneManager.GetActiveScene().buildIndex },
+			{ "version", Version.Number },
+		});
+	}
 
 	public void AddGhost(Ghost ghost){
 		ghosts.Add(ghost);
@@ -59,6 +67,10 @@ public class Game : MonoBehaviour {
 
 	protected IEnumerator ActivateCandleHelper(Room room){
 
+		UI.instance.tutorialText1.text = "";
+		UI.instance.tutorialText2.text = "";
+		DOTween.KillAll();
+
 		List<Ghost> allGhosts = new List<Ghost>(ghosts);
 
 		// time to see if you've won or not.
@@ -90,10 +102,24 @@ public class Game : MonoBehaviour {
 
 		// if that's all the ghosts there are, you won!
 		if(allGhosts.Count == 0) {
+
+			Analytics.CustomEvent("level_won", new Dictionary<string, object> {
+				{ "number", SceneManager.GetActiveScene().buildIndex },
+				{ "current_room", Player.instance.GetActiveRoom().name },
+				{ "version", Version.Number },
+			});
+
 			WinGame();
 
 		// if there are any more ghosts, the first one comes and attacks you
 		} else {
+
+			Analytics.CustomEvent("level_lost", new Dictionary<string, object> {
+				{ "number", SceneManager.GetActiveScene().buildIndex },
+				{ "reason", "missed_ghosts" },
+				{ "current_room", Player.instance.GetActiveRoom().name },
+				{ "version", Version.Number },
+			});
 
 			yield return new WaitForSeconds(0.25f);
 			allGhosts[0].transform.DOMove(Player.instance.transform.position,0.5f);

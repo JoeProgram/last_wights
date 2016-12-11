@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.Analytics;
+using UnityEngine.SceneManagement;
 
 // used code from Unity Tutorial: https://unity3d.com/learn/tutorials/topics/2d-game-creation/2d-character-controllers
 
@@ -238,6 +240,16 @@ public class Player : MonoBehaviour {
 				if(ghost.isDangerous) {
 					Game.instance.LoseGame();
 					isAlive = false;
+					GetComponent<Rigidbody2D>().isKinematic = true;
+
+					Analytics.CustomEvent("level_lost", new Dictionary<string, object> {
+						{ "number", SceneManager.GetActiveScene().buildIndex },
+						{ "reason", "hit_ghost" },
+						{ "ghost", ghost.name  },
+						{ "current_room", GetActiveRoom().name },
+						{ "version", Version.Number },
+					});
+
 				}
 			}
 		}

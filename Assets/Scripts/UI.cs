@@ -9,6 +9,9 @@ public class UI : MonoBehaviour {
 	public CanvasGroup lostMessage;
 	public Image candleActionPrompt;
 
+	public Text tutorialText1;
+	public Text tutorialText2;
+
 
 	// singleton
 	private static UI _instance;
