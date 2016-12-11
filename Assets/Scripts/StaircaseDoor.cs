@@ -20,6 +20,22 @@ public class StaircaseDoor : ActionTrigger {
 		}
 	}
 
+
+	// also allow W or Up
+	protected virtual void Update(){
+
+		// the player is here and pressed the action button
+		if(isActive && !inputProcessed && (Input.GetAxis("Action") > 0 || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W) )) {
+			DoAction();
+		}
+
+		if(Input.GetAxis("Action") > 0) {
+			inputProcessed = true;
+		} else {
+			inputProcessed = false;
+		}
+	}
+
 	protected override void DoAction(){
 		StartCoroutine(MovePlayer());
 	}

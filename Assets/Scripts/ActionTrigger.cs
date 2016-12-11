@@ -6,7 +6,7 @@ using UnityEngine;
 // performs an action if the player is here and presses the action key
 public class ActionTrigger : MonoBehaviour {
 
-	bool isActive = false;
+	protected bool isActive = false;
 	public SpriteRenderer prompt;
 	public bool inputProcessed; //there's no GetAxisDown, so we have to do a little more work
 
@@ -27,7 +27,7 @@ public class ActionTrigger : MonoBehaviour {
 
 	}
 
-	void Update(){
+	protected virtual void Update(){
 
 		// the player is here and pressed the action button
 		if(isActive && !inputProcessed && Input.GetAxis("Action") > 0) {
