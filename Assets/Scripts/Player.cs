@@ -154,6 +154,8 @@ public class Player : MonoBehaviour {
 		 * 
 		 * *******************************/
 
+		bool animatorIsUsingCandle = false;
+
 		if(hasCandle) {
 
 			// see whether all the ghosts are in the same room
@@ -175,6 +177,8 @@ public class Player : MonoBehaviour {
 				}
 
 			} else if(canUseCandle && Input.GetAxis("UseCandle") > 0) {
+
+				animatorIsUsingCandle = true;
 
 				if(!GetComponent<AudioSource>().isPlaying) {
 					GetComponent<AudioSource>().Play();
@@ -202,6 +206,7 @@ public class Player : MonoBehaviour {
 		}
 
 		// simulate key press down
+		animator.SetBool( "usingCandle", animatorIsUsingCandle);
 		usedCandleKeyDown = Input.GetAxis("UseCandle") > 0;
 
 
@@ -287,6 +292,8 @@ public class Player : MonoBehaviour {
 				if(ghost.isDangerous) {
 					Game.instance.LoseGame();
 					isAlive = false;
+					animator.SetBool("isAlive", false);
+					candle.gameObject.SetActive(false);
 					GetComponent<Rigidbody2D>().isKinematic = true;
 					GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
