@@ -105,6 +105,7 @@ public class Player : MonoBehaviour {
 		// flip sprite
 		if( move != 0 ){
 			GetComponent<SpriteRenderer>().flipX = move < 0;
+
 		}
 
 		//animation
@@ -158,6 +159,13 @@ public class Player : MonoBehaviour {
 
 		if(hasCandle) {
 
+			candle.flipX = !GetComponent<SpriteRenderer>().flipX; // candle and player are backwards. Boo.....
+			if(candle.flipX) {
+				candle.transform.localPosition = new Vector2(0.188f, 0.43f);
+			} else if(move < 0) {
+				candle.transform.localPosition = new Vector2(-0.188f, 0.43f);
+			}
+
 			// see whether all the ghosts are in the same room
 			canUseCandle = GetActiveRoom().HasAllGhosts();
 			if(canUseCandle) {
@@ -179,6 +187,12 @@ public class Player : MonoBehaviour {
 			} else if(canUseCandle && Input.GetAxis("UseCandle") > 0) {
 
 				animatorIsUsingCandle = true;
+
+				if(candle.flipX) {
+					candle.transform.localPosition = new Vector2(0.084f, 0.43f);
+				} else if(move < 0) {
+					candle.transform.localPosition = new Vector2(-0.0848f, 0.43f);
+				}
 
 				if(!GetComponent<AudioSource>().isPlaying) {
 					GetComponent<AudioSource>().Play();

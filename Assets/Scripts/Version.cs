@@ -4,6 +4,6 @@ using UnityEngine;
 
 public static class Version {
 
-	public static string Number = "0.1.0";
+	public static string Number = "1.0.0";
 
 }
