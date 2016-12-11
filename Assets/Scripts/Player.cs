@@ -37,8 +37,11 @@ public class Player : MonoBehaviour {
 	bool hasCandle = false;
 	bool usedCandle = false;
 	public SpriteRenderer candle;
+	public bool canUseCandle = false;
 	public float useCandleTime = 0.5f;
 	public float useCandle;
+	public ParticleSystem redFlame;
+	public ParticleSystem blueFlame;
 
 	//zoom in for candle action
 	public float normalCameraSize = 3.2f;
@@ -130,7 +133,19 @@ public class Player : MonoBehaviour {
 		 * *******************************/
 
 		if(hasCandle) {
-			if(Input.GetAxis("UseCandle") > 0) {
+
+			// see whether all the ghosts are in the same room
+			canUseCandle = GetActiveRoom().HasAllGhosts();
+			if( canUseCandle ) {
+				redFlame.gameObject.SetActive(false);
+				blueFlame.gameObject.SetActive(true);
+			} else {
+				redFlame.gameObject.SetActive(true);
+				blueFlame.gameObject.SetActive(false);
+			}
+
+
+			if(canUseCandle && Input.GetAxis("UseCandle") > 0) {
 
 				if(!GetComponent<AudioSource>().isPlaying) {
 					GetComponent<AudioSource>().Play();
@@ -271,7 +286,8 @@ public class Player : MonoBehaviour {
 	// the player has used up the candle
 	public void UsedUpCandle(){
 
-		candle.gameObject.SetActive(false);
+		//candle.gameObject.SetActive(false);
+		blueFlame.gameObject.SetActive( false );
 
 	}
 		

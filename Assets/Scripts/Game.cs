@@ -84,10 +84,9 @@ public class Game : MonoBehaviour {
 			
 
 		// next, all ghosts in this room (even just touching it a little ) get sucked into the candle
-		Debug.Log( "Ghosts in " + Player.instance.activeRoom.name + ": " + Player.instance.activeRoom.GetGhosts().Count); 
-		foreach(Ghost deadGhost in Player.instance.activeRoom.GetGhosts()) {
+		foreach(Ghost deadGhost in allGhosts) {
 			
-			allGhosts.Remove(deadGhost);
+			//allGhosts.Remove(deadGhost);
 			deadGhost.transform.DOMove(Player.instance.GetCandlePosition(), 0.5f).OnComplete( () => GhostSuckedIn(deadGhost));
 			deadGhost.transform.DOScale(Vector3.one * 0.1f, 0.5f);
 			yield return new WaitForSeconds(0.2f);
@@ -98,22 +97,18 @@ public class Game : MonoBehaviour {
 
 		yield return new WaitForSeconds(0.5f);
 
-		Debug.Log("all ghosts length " + allGhosts.Count);
+		//Debug.Log("all ghosts length " + allGhosts.Count);
 
-		// if that's all the ghosts there are, you won!
-		if(allGhosts.Count == 0) {
+		Analytics.CustomEvent("level_won", new Dictionary<string, object> {
+			{ "number", SceneManager.GetActiveScene().buildIndex },
+			{ "current_room", Player.instance.GetActiveRoom().name },
+			{ "version", Version.Number },
+		});
 
-			Analytics.CustomEvent("level_won", new Dictionary<string, object> {
-				{ "number", SceneManager.GetActiveScene().buildIndex },
-				{ "current_room", Player.instance.GetActiveRoom().name },
-				{ "version", Version.Number },
-			});
+		WinGame();
 
-			WinGame();
-
-		// if there are any more ghosts, the first one comes and attacks you
-		} else {
-
+		// this wasn't very fun - taking it out
+		/*
 			Analytics.CustomEvent("level_lost", new Dictionary<string, object> {
 				{ "number", SceneManager.GetActiveScene().buildIndex },
 				{ "reason", "missed_ghosts" },
@@ -125,9 +120,9 @@ public class Game : MonoBehaviour {
 			allGhosts[0].transform.DOMove(Player.instance.transform.position,0.5f);
 			yield return new WaitForSeconds(0.5f);
 			LoseGame();
-
+		
 		}
-
+		*/
 
 
 	}

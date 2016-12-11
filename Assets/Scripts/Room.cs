@@ -76,6 +76,10 @@ public class Room : MonoBehaviour {
 		return ghosts;
 	}
 
+	public bool HasAllGhosts(){
+		return ghosts.Count == Game.instance.ghosts.Count;
+	}
+
 	// reveal everything in this room
 	public void OpenRoom(){
 
