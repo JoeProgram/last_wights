@@ -15,6 +15,9 @@ public class Player : MonoBehaviour {
 
 	public bool isAlive = true;
 
+	//animation variables
+	public Animator animator;
+
 	//running variables
 	public SpriteRenderer runBarHolder;
 	public SpriteRenderer runBar;
@@ -61,6 +64,7 @@ public class Player : MonoBehaviour {
 	
 		stamina = maxStamina;
 		runBarMaxSize = 0.4217646f;
+		animator = GetComponent<Animator>();
 
 	}
 	
@@ -89,13 +93,26 @@ public class Player : MonoBehaviour {
 			isRunning = false;
 
 		}
-			
+
+
 		float currentSpeed = speed;
 		if( isRunning ) currentSpeed += runBonusSpeed;
 
 		// move the character around
         float move = Input.GetAxis("Horizontal");
 		GetComponent<Rigidbody2D>().velocity = new Vector2(move * (currentSpeed), GetComponent<Rigidbody2D>().velocity.y);
+
+		// flip sprite
+		if( move != 0 ){
+			GetComponent<SpriteRenderer>().flipX = move < 0;
+		}
+
+		//animation
+		if(move != 0 ) {
+			animator.SetFloat("speed", currentSpeed);
+		} else {
+			animator.SetFloat("speed", 0);
+		}
 
 		// show and update the run bar if it's not maxed out
 		if(isRunning || stamina < maxStamina) {
