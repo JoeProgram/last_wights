@@ -43,6 +43,10 @@ public class Ghost : MonoBehaviour {
 	public float attackCoolDownTime; // how long it takes the ghost between attacks
 
 
+	public virtual void Awake(){
+		Game.instance.AddGhost(this);
+	}
+
 	// Use this for initialization
 	protected virtual void Start () {
 

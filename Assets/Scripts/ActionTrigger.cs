@@ -8,6 +8,7 @@ public class ActionTrigger : MonoBehaviour {
 
 	bool isActive = false;
 	public SpriteRenderer prompt;
+	public bool inputProcessed; //there's no GetAxisDown, so we have to do a little more work
 
 	void Start(){
 		
@@ -27,8 +28,14 @@ public class ActionTrigger : MonoBehaviour {
 	void Update(){
 
 		// the player is here and pressed the action button
-		if(isActive && Input.GetAxis("Action") > 0) {
+		if(isActive && !inputProcessed && Input.GetAxis("Action") > 0) {
 			DoAction();
+		}
+
+		if(Input.GetAxis("Action") > 0) {
+			inputProcessed = true;
+		} else {
+			inputProcessed = false;
 		}
 	}
 

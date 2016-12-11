@@ -14,8 +14,8 @@ public class Game : MonoBehaviour {
 
 	public List<Ghost> ghosts;
 
-	public void Start(){
-		ghosts = new List<Ghost>( GameObject.FindObjectsOfType<Ghost>());
+	public void AddGhost(Ghost ghost){
+		ghosts.Add(ghost);
 	}
 
 	public void LoseGame(){
@@ -59,15 +59,19 @@ public class Game : MonoBehaviour {
 		// time to see if you've won or not.
 		// first - we don't want players or the ghosts moving - they should stay still
 		foreach( Ghost ghost in allGhosts) {
+			ghost.gameObject.SetActive(true);
 			ghost.SwitchToEnding();
+			ghost.transform.parent = null;
 			//Player.instance.GetComponent<Rigidbody2D>() = true;
 		}
 			
 
 		// next, all ghosts in this room (even just touching it a little ) get sucked into the candle
+		Debug.Log( "Ghosts in " + Player.instance.activeRoom.name + ": " + Player.instance.activeRoom.GetGhosts().Count); 
 		foreach(Ghost deadGhost in Player.instance.activeRoom.GetGhosts()) {
+			
 			allGhosts.Remove(deadGhost);
-			deadGhost.transform.DOMove(Player.instance.GetCandlePosition(), 0.5f).OnComplete( () => Destroy( deadGhost.gameObject ));
+			deadGhost.transform.DOMove(Player.instance.GetCandlePosition(), 0.5f).OnComplete( () => deadGhost.gameObject.SetActive(false));
 			deadGhost.transform.DOScale(Vector3.one * 0.1f, 0.5f);
 			yield return new WaitForSeconds(0.2f);
 		}

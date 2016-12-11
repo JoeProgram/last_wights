@@ -200,15 +200,21 @@ public class Player : MonoBehaviour {
 		// keep track of the current room you're in
 		// the one that counts is the one that your point position
 		if(other.gameObject.CompareTag("room")) {
-			if( other.gameObject.GetComponent<BoxCollider2D>().OverlapPoint((Vector2)transform.position + Vector2.up )){
+			if( IsInRoom( other.gameObject.GetComponent<Room>())){
 				activeRoom = other.gameObject.GetComponent<Room>();
 			}
 		}
 	}
 
+	public bool IsInRoom( Room room ){
+		return room.gameObject.GetComponent<BoxCollider2D>().OverlapPoint((Vector2)transform.position + Vector2.up);
+	}
+
 	public Room GetActiveRoom(){
 		return activeRoom;
 	}
+
+
 
 	void OnCollisionEnter2D( Collision2D collision ){
 
