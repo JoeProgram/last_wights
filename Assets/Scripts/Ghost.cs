@@ -20,6 +20,10 @@ public class Ghost : MonoBehaviour {
     public SpriteRenderer sprite;
 	public StaircaseDoor staircaseDoor;
 
+	//ghost sprites
+	public Sprite normalSprite;
+	public Sprite attackSprite;
+
 	//ghost colors
 	protected Color normalColor = new Color(0.48828125f, 0.83203125f, 0.97265625f);
 	protected Color attackColor = new Color(0.71875f, 0,0);
@@ -52,9 +56,12 @@ public class Ghost : MonoBehaviour {
 	public AudioClip sfxPrepareAttack;
 	public AudioClip sfxAttack;
 
+
+
 	public virtual void Awake(){
 		Game.instance.AddGhost(this);
 		sprite.color = normalColor;
+		sprite.sprite = normalSprite;
 	}
 
 	// Use this for initialization
@@ -137,7 +144,7 @@ public class Ghost : MonoBehaviour {
 		float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
 		transform.position += new Vector3(speed * Time.deltaTime * Mathf.Sign(player.transform.position.x - transform.position.x), 0, 0);
 
-
+		sprite.flipX = Mathf.Sign(player.transform.position.x - transform.position.x) > 0;
 
 		// see if we should switch to a new behavior
 		if(!isAwareOfPlayer) {
@@ -179,6 +186,8 @@ public class Ghost : MonoBehaviour {
 		// move the ghost towards the door
 		transform.position += new Vector3(speed * Time.deltaTime * Mathf.Sign(staircaseDoor.transform.position.x - transform.position.x), 0, 0);
 
+		sprite.flipX = Mathf.Sign(staircaseDoor.transform.position.x - transform.position.x) > 0;
+
 		// move into the door
 		if(sprite.bounds.Intersects(staircaseDoor.GetComponent<BoxCollider2D>().bounds)) {
 			transform.position = staircaseDoor.connectedDoor.transform.position;
@@ -200,20 +209,25 @@ public class Ghost : MonoBehaviour {
 		// cue the attack
 		sprite.transform.DOShakePosition(attackPrepTime, new Vector3(0.08f,0,0),20,45,false,false);
 		AudioSource.PlayClipAtPoint(sfxPrepareAttack, Camera.main.transform.position);
+		sprite.flipX = Mathf.Sign(attackPosition.x - transform.position.x) > 0;
 		yield return new WaitForSeconds(attackPrepTime);
 
 		// perform the attack
 		isDangerous = true;
 		sprite.gameObject.layer = LayerMask.NameToLayer("ghost");
 		sprite.color = attackColor;
+		sprite.sprite = attackSprite;
 		AudioSource.PlayClipAtPoint(sfxAttack, Camera.main.transform.position);
 		transform.DOJump(attackPosition, -0.15f, 1, attackAnimationTime);
 		yield return new WaitForSeconds(attackTime);
+
+
 
 		// the attack ends a little earlier than the animation
 		isDangerous = false;
 		sprite.gameObject.layer = LayerMask.NameToLayer("intangible");
 		sprite.color = normalColor;
+		sprite.sprite = normalSprite;
 		yield return new WaitForSeconds(attackAnimationTime - attackTime);
 
 		// recharge - switch to another state while we recover

@@ -27,6 +27,7 @@ public class PrickleGhost : Ghost {
 		isDangerous = true;
 		sprite.gameObject.layer = LayerMask.NameToLayer("ghost");
 		sprite.color = attackColor;
+		sprite.sprite = attackSprite;
 		AudioSource.PlayClipAtPoint(sfxAttack, Camera.main.transform.position);
 		//sprite.transform.DOShakePosition(attackPrepTime, new Vector3(0.2f,0,0),20,45,false,false);
 		yield return new WaitForSeconds(attackTime);
@@ -35,6 +36,7 @@ public class PrickleGhost : Ghost {
 		isDangerous = false;
 		sprite.gameObject.layer = LayerMask.NameToLayer("intangible");
 		sprite.color = normalColor;
+		sprite.sprite = normalSprite;
 		yield return new WaitForSeconds(attackAnimationTime - attackTime);
 
 		// recharge - switch to another state while we recover
