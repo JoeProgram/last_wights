@@ -61,7 +61,9 @@
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\PrickleGhost.cs" />
      <Compile Include="Assets\Scripts\Room.cs" />
+     <Compile Include="Assets\Scripts\ShyGhost.cs" />
      <Compile Include="Assets\Scripts\StaircaseDoor.cs" />
+     <Compile Include="Assets\Scripts\StayAlive.cs" />
      <Compile Include="Assets\Scripts\TutorialTrigger.cs" />
      <Compile Include="Assets\Scripts\UI.cs" />
      <Compile Include="Assets\Scripts\Version.cs" />

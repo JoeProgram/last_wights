@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class Intro : MonoBehaviour {
 
 	public Image blackout;
+	public float displayTime = 3;
 
 	// Use this for initialization
 	void Start () {
@@ -24,7 +25,7 @@ public class Intro : MonoBehaviour {
 			new Color(0,0,0,0),
 			1f);
 		
-		yield return new WaitForSeconds(3);
+		yield return new WaitForSeconds(displayTime);
 
 		DOTween.To(
 			() => blackout.color,
